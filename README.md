@@ -1,2 +1,2 @@
 # subnet
-Public repo of our public scripts.
+A repository of all our public scripts.
