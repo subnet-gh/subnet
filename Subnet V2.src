@@ -78,19 +78,19 @@ end function
 
 formatFile = function(file, name, color)
 	if color == null then color = calcColor(file)
-
+	
 	data = file.permissions + " "
 	data = data + file.owner + " "
 	data = data + file.group + " "
 	data = data + hr(file.size.val) + " "
-
+	
 	if color != false then data = data + "<color=" + color + ">"
-
+	
 	if name == null then data = data + file.name
 	if name != null then data = data + name
-
+	
 	if color != false then data = data + "</color>"
-
+	
 	return data
 end function
 
@@ -98,7 +98,7 @@ checkAccess = function(file)
 	while file.parent != null
 		file = file.parent
 	end while
-
+	
 	for f in file.get_folders
 		if f.name == "root" then
 			if f.has_permission("w") and f.has_permission("r") and f.has_permission("x") then
@@ -109,14 +109,14 @@ checkAccess = function(file)
 			file = f
 		end if
 	end for
-
+	
 	for f in file.get_folders
 		if f.name == "guest" then continue
 		if f.has_permission("w") and f.has_permission("r") and f.has_permission("x") then
 			return f.name
 		end if
 	end for
-
+	
 	return "guest"
 end function
 
@@ -175,7 +175,7 @@ fs = function(file)
 		end if
 		if command == "ls" then
 			data = formatFile(file, ".")
-
+			
 			if file.path != "/" then
 				data = data + "\n"
 				data = data + formatFile(file.parent, "..")
@@ -227,21 +227,21 @@ checkPort = function(ip, port)
 			if(typeof(result) == "null") then
 				continue
 			end if
-
+			
 			log("[+] Obtained <b>" + typeof(result) + "</b>")
-
+			
 			if not found.hasIndex(typeof(result)) then
 				found[typeof(result)] = {}
 			end if
-
+			
 			id = found[typeof(result)].len
-
+			
 			found[typeof(result)][id] = {}
 			found[typeof(result)][id]["type"] = typeof(result)
 			found[typeof(result)][id]["object"] = result
-
+			
 			file = null
-
+			
 			if(typeof(result) == "shell") then
 				file = result.host_computer.File("/home/guest/")
 			end if
@@ -250,26 +250,26 @@ checkPort = function(ip, port)
 				while result.path != "/"
 					result = result.parent
 				end while
-
+				
 				for f in result.get_folders
 					if f.name == "home" then
 						result = f
 					end if
 				end for
-
+				
 				for f in result.get_folders
 					if f.name == "guest" then
 						result = f
 					end if
 				end for
-
+				
 				file = result
 			end if
 			
 			if(typeof(result) == "computer") then
 				file = result.File("/home/guest/")
 			end if
-
+			
 			if file != null then
 				found[typeof(result)][id]["user"] = checkAccess(file)
 			else
@@ -305,29 +305,29 @@ probe = function(ip)
 	log("[i] To select an exploit, type " + char(34) + "<type> <id>" + char(34) + " (eg: shell 1)")
 	while true
 		args = input("[?] Select exploit: ").split(" ")
-
+		
 		if args.len != 2 then
 			log("[i] To select an exploit, type " + char(34) + "<type> <id>" + char(34) + " (eg: shell 1)")
 			continue
 		end if
-
+		
 		if not found.hasIndex(args[0]) then
 			log("[!] Unknown exploit.")
 			continue
 		end if
-
+		
 		args[1] = args[1].val
-
+		
 		if not found[args[0]].hasIndex(args[1]) then
 			log("[!] Invalid ID.")
 			continue
 		end if
-
+		
 		choice = found[args[0]][args[1]]
 		object = choice.object
-
+		
 		log("[i] Type: <b>" + typeof(object) + "</b>.")
-
+		
 		if typeof(object) == "computer" then fs(object.File("/"))
 		if typeof(object) == "shell" then object.start_terminal()
 		if typeof(object) == "file" then fs(object)
@@ -336,7 +336,7 @@ end function
 
 if params.len == 1 then
 	e = false
-
+	
 	if is_valid_ip(params[0]) then
 		probe(params[0])
 		e = true
@@ -350,10 +350,11 @@ if params.len == 1 then
 			log("[!] Invalid IP: " + params[0])
 		end if
 	end if
-
+	
 	if e then
 		log("[+] Done.")
 	end if
 else
-	log("[!] Usage: subnetv2 [ip]")
+	file = program_path.split("/")[-1]
+	log("[!] Usage: "+file+" [ip]")
 end if
