@@ -272,6 +272,8 @@ checkPort = function(ip, port)
 
 			if file != null then
 				found[typeof(result)][id]["user"] = checkAccess(file)
+			else
+				found[typeof(result)][id]["user"] = "N/A (guest?)"
 			end if
 		end for
 	end for
