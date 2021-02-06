@@ -1,6 +1,10 @@
 host = get_shell.host_computer
 
 old = 0
+newpass = user_input("Do you want to try and inject a new password for a user where possible?").lower
+	if ["y","yes","Y","Yes","YES"].indexOf(newpass)!=null then
+		newpass = user_input("Enter new Password: ")
+		end if
 
 if current_path == null then
 	current_path = host.current_path
@@ -223,7 +227,7 @@ checkPort = function(ip, port)
 			if(val == null) then continue
 			
 			log("[i] Exploiting <b>" + val + "</b>")
-			result = lib.overflow(vuln, val)
+			result = lib.overflow(vuln, val, newpass)
 			if(typeof(result) == "null") then
 				continue
 			end if
